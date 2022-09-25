@@ -38,33 +38,20 @@ public class PomodoroBot extends TelegramLongPollingBot {
     public void onUpdateReceived(Update update) {
         if(update.hasMessage() && update.getMessage().hasText()){
             var chatId = update.getMessage().getChatId();
-            if(update.getMessage().getText().equals("/start")){
-                //Create new user's object
-                if(!users.containsKey(chatId))
-                    users.put(chatId, new PomodoroUser(chatId));
-
-                sendMessage(chatId.toString(), """
-                        Привіт! Я буду керувати твоїм часом роботи та відпочинку.
-                        Введи час у хвилинах у форматі 10 5, де
-                        10 - час роботи,
-                        5 - час відпочинку.
-                        """);
-            }
-            else{
-                String[] args = update.getMessage().getText().split(" ");
-                if(args.length == 2){
-                    //Set user's timer
-                    users.get(chatId).SetTimer(Integer.parseInt(args[0]), Integer.parseInt(args[1]), 1);
-                }
-                else{
-                    sendMessage(chatId.toString(), "Не зрозумів повідомлення");
-                }
+            String[] cmd = update.getMessage().getText().split(" ");
+            switch (cmd[0]) {
+                case "/start" -> startCommand(chatId);
+                case "/help" -> helpCommand(chatId);
+                case "/set" -> setCommand(chatId, cmd);
+                case "/chrono" -> chronoCommand(chatId, cmd[1]);
+                case "/stop" -> stopCommand(chatId);
+                default -> sendMessage(chatId, "Команда не розпізнана");
             }
         }
     }
 
-    public void sendMessage(String chatId, String text) {
-        SendMessage msg = new SendMessage(chatId, text);
+    public void sendMessage(Long chatId, String text) {
+        SendMessage msg = new SendMessage(chatId.toString(), text);
         try {
             execute(msg);
         } catch (TelegramApiException e) {
@@ -75,11 +62,64 @@ public class PomodoroBot extends TelegramLongPollingBot {
     public  void checkTimer() throws InterruptedException {
         while (true){
             for (Map.Entry<Long, PomodoroUser> user: users.entrySet()) {
-                if(user.getValue().isTimerRunning && user.getValue().endTime.compareTo(Instant.now()) < 0){
+                if(user.getValue().GetIsTimerRunning() && user.getValue().GetEndTime().compareTo(Instant.now()) < 0){
                     user.getValue().TimerEnd();
                 }
             }
             Thread.sleep(1000l);
         }
+    }
+
+    private void startCommand(Long chatId) {
+        //Create new user's object
+        if(!users.containsKey(chatId))
+            users.put(chatId, new PomodoroUser(chatId));
+
+        sendMessage(chatId, """
+                Привіт! Я бот, що допомагає керувати часом за допомогою принципа Помодоро.
+                Пропиши /help, щоб отримати список команд.
+                """);
+    }
+
+    private void setCommand(Long chatId, String[] cmd){
+        if(cmd.length < 5){
+            sendMessage(chatId, "Недостатньо аргументів!");
+            return;
+        }
+
+        int[] args = new int[4];
+        for (int i = 0; i < 4; i++){
+            args[i] = Integer.parseInt(cmd[i +1]);
+        }
+
+        //Set user's timer
+        users.get(chatId).SetTimer(args[0], args[1], args[2], args[3]);
+    }
+
+    private void chronoCommand(Long chatId, String unit){
+        var user = users.get(chatId);
+        if(unit.equals("хв.")){
+            user.chronoUnit = ChronoUnit.MINUTES;
+            sendMessage(chatId, "Хвилини встановлено одиницями виміру");
+        }
+        else if(unit.equals("с.")){
+            user.chronoUnit = ChronoUnit.SECONDS;
+            sendMessage(chatId, "Секунди встановлено одиницями виміру");
+        }
+        else{
+            sendMessage(chatId, "Неможливий аргумент!");
+        }
+    }
+
+    private void stopCommand(Long chatId){
+        users.get(chatId).StopTimer();
+        sendMessage(chatId, "Таймер зупинено!");
+    }
+
+    private void helpCommand(Long chatId){
+        sendMessage(chatId, """
+                    /set [тривалість роботи] [тривалість відпочинку] [кіл-ть повторень циклу] [множник часу роботи] - запускає новий таймер
+                    /chrono [одиниця виміру часу], допустимі аргументи: хв., с. - змінює одиницю виміру часу
+                    /stop - зупиняє таймер""");
     }
 }

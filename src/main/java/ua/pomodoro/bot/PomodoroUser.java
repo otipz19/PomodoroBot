@@ -4,27 +4,36 @@ import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 
 public class PomodoroUser {
-    public Long chatId;
-    public boolean isTimerRunning;
-    public PomodoroBot.TimerType timerType;
-    public Instant endTime;
-    public int workTimeDuration;
-    public int breakTimeDuration;
-    public int repeatsLeft;
-    public int multiplier;
+    private Long chatId;
+    private boolean isTimerRunning;
+    private PomodoroBot.TimerType timerType;
+    private Instant endTime;
+    private int workTimeDuration;
+    private int breakTimeDuration;
+    private int repeatsLeft;
+    private int multiplier;
+    public ChronoUnit chronoUnit;
 
-    PomodoroUser(long chatId){
+    public boolean GetIsTimerRunning() { return isTimerRunning; }
+    public Instant GetEndTime() { return endTime; }
+
+    public PomodoroUser(long chatId){
         this.chatId = chatId;
+        chronoUnit  = ChronoUnit.MINUTES;
     }
 
-    public void SetTimer(int workTimeDuration, int breakTimeDuration, int repeats){
+    public void SetTimer(int workTimeDuration, int breakTimeDuration, int repeats, int multiplier){
+        if(workTimeDuration < 1 || breakTimeDuration < 1 || repeats < 1 || multiplier < 1){
+            PomodoroBot.S.sendMessage(chatId, "Неможливі аргументи!");
+        }
+
         this.workTimeDuration = workTimeDuration;
         this.breakTimeDuration = breakTimeDuration;
         this.repeatsLeft = repeats;
+        this.multiplier = multiplier;
         isTimerRunning = true;
         timerType = PomodoroBot.TimerType.WORK;
-        //SHOULD BE CHANGED TO ChronoUnit.MINUTES lately
-        endTime = Instant.now().plus(workTimeDuration, ChronoUnit.SECONDS);
+        endTime = Instant.now().plus(workTimeDuration, chronoUnit);
 
         NotifyUser(true);
     }
@@ -38,34 +47,39 @@ public class PomodoroUser {
                 return;
             }
             timerType = PomodoroBot.TimerType.WORK;
-            //SHOULD BE CHANGED TO ChronoUnit.MINUTES lately
-            endTime = Instant.now().plus(workTimeDuration, ChronoUnit.SECONDS);
+            workTimeDuration *= multiplier;
+            endTime = Instant.now().plus(workTimeDuration, chronoUnit);
         }
         else{
             timerType = PomodoroBot.TimerType.BREAK;
-            //SHOULD BE CHANGED TO ChronoUnit.MINUTES lately
-            endTime = Instant.now().plus(breakTimeDuration, ChronoUnit.SECONDS);
+            endTime = Instant.now().plus(breakTimeDuration, chronoUnit);
         }
 
         NotifyUser(false);
     }
 
+    public void StopTimer(){
+        isTimerRunning = false;
+    }
+
     private void NotifyUser(boolean justStarted){
         String msg = new String();
 
+        String timeUnit = chronoUnit == ChronoUnit.MINUTES ? "хв." : "с.";
+
         if(justStarted){
-            msg = "Розпочато новий цикл роботи-відпочинку!\nТривалість періоду роботи: " + workTimeDuration + " хвилин.\nТривалість періоду відпочинку: " + breakTimeDuration + " хвилин.";
+            msg = "Розпочато новий цикл роботи-відпочинку!\nТривалість періоду роботи: " + workTimeDuration + timeUnit + "\nТривалість періоду відпочинку: " + breakTimeDuration + timeUnit;
         }
         else if(!isTimerRunning){
             msg = "Вітаю! Помодоро завершено.\nВи можете задати новий цикл роботи-відпочинку використавши команду /set";
         }
         else if(timerType == PomodoroBot.TimerType.WORK){
-            msg = "Пройшло " + breakTimeDuration + " хвилин. Час відпочинку завершено!\nНаступний період триватиме " + workTimeDuration + " хвилин.\nДо роботи!";
+            msg = "Пройшло " + breakTimeDuration + timeUnit + " Час відпочинку завершено!\nНаступний період триватиме " + workTimeDuration + timeUnit + "\nДо роботи!";
         }
         else{
-            msg = "Пройшло " + workTimeDuration + " хвилин. Час роботи завершено!\nНаступний період триватиме " + breakTimeDuration + " хвилин.\nГарного відпочинку!";
+            msg = "Пройшло " + workTimeDuration + timeUnit + " Час роботи завершено!\nНаступний період триватиме " + breakTimeDuration + timeUnit + "\nГарного відпочинку!";
         }
 
-        PomodoroBot.S.sendMessage(chatId.toString(), msg);
+        PomodoroBot.S.sendMessage(chatId, msg);
     }
 }
