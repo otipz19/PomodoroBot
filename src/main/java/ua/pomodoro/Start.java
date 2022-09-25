@@ -7,11 +7,19 @@ import ua.pomodoro.bot.PomodoroBot;
 
 public class Start {
     public static void main(String[] args) {
+        PomodoroBot pomodoroBot = new PomodoroBot();
         try {
             TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-            telegramBotsApi.registerBot(new PomodoroBot());
+            telegramBotsApi.registerBot(pomodoroBot);
         } catch (TelegramApiException e) {
             throw new RuntimeException(e);
         }
+        new Thread(() -> {
+            try {
+                pomodoroBot.checkTimer();
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
     }
 }
