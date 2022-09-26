@@ -24,7 +24,7 @@ public class PomodoroUser {
 
     public void SetTimer(int workTimeDuration, int breakTimeDuration, int repeats, int multiplier){
         if(workTimeDuration < 1 || breakTimeDuration < 1 || repeats < 1 || multiplier < 1){
-            PomodoroBot.S.sendMessage(chatId, "Íåìîæëèâ³ àðãóìåíòè!");
+            PomodoroBot.S.sendMessage(chatId, "ÐÐµÐ¼Ð¾Ð¶Ð»Ð¸Ð²Ñ– Ð°Ñ€Ð³ÑƒÐ¼ÐµÐ½Ñ‚Ð¸!");
         }
 
         this.workTimeDuration = workTimeDuration;
@@ -65,19 +65,19 @@ public class PomodoroUser {
     private void NotifyUser(boolean justStarted){
         String msg = new String();
 
-        String timeUnit = chronoUnit == ChronoUnit.MINUTES ? "õâ." : "ñ.";
+        String timeUnit = chronoUnit == ChronoUnit.MINUTES ? "Ñ…Ð²." : "Ñ.";
 
         if(justStarted){
-            msg = "Ðîçïî÷àòî íîâèé öèêë ðîáîòè-â³äïî÷èíêó!\nÒðèâàë³ñòü ïåð³îäó ðîáîòè: " + workTimeDuration + timeUnit + "\nÒðèâàë³ñòü ïåð³îäó â³äïî÷èíêó: " + breakTimeDuration + timeUnit;
+            msg = "Ð Ð¾Ð·Ð¿Ð¾Ñ‡Ð°Ñ‚Ð¾ Ð½Ð¾Ð²Ð¸Ð¹ Ñ†Ð¸ÐºÐ» Ñ€Ð¾Ð±Ð¾Ñ‚Ð¸-Ð²Ñ–Ð´Ð¿Ð¾Ñ‡Ð¸Ð½ÐºÑƒ!\nÐ¢Ñ€Ð¸Ð²Ð°Ð»Ñ–ÑÑ‚ÑŒ Ð¿ÐµÑ€Ñ–Ð¾Ð´Ñƒ Ñ€Ð¾Ð±Ð¾Ñ‚Ð¸: " + workTimeDuration + timeUnit + "\nÐ¢Ñ€Ð¸Ð²Ð°Ð»Ñ–ÑÑ‚ÑŒ Ð¿ÐµÑ€Ñ–Ð¾Ð´Ñƒ Ð²Ñ–Ð´Ð¿Ð¾Ñ‡Ð¸Ð½ÐºÑƒ: " + breakTimeDuration + timeUnit;
         }
         else if(!isTimerRunning){
-            msg = "Â³òàþ! Ïîìîäîðî çàâåðøåíî.\nÂè ìîæåòå çàäàòè íîâèé öèêë ðîáîòè-â³äïî÷èíêó âèêîðèñòàâøè êîìàíäó /set";
+            msg = "Ð’Ñ–Ñ‚Ð°ÑŽ! ÐŸÐ¾Ð¼Ð¾Ð´Ð¾Ñ€Ð¾ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¾.\nÐ’Ð¸ Ð¼Ð¾Ð¶ÐµÑ‚Ðµ Ð·Ð°Ð´Ð°Ñ‚Ð¸ Ð½Ð¾Ð²Ð¸Ð¹ Ñ†Ð¸ÐºÐ» Ñ€Ð¾Ð±Ð¾Ñ‚Ð¸-Ð²Ñ–Ð´Ð¿Ð¾Ñ‡Ð¸Ð½ÐºÑƒ Ð²Ð¸ÐºÐ¾Ñ€Ð¸ÑÑ‚Ð°Ð²ÑˆÐ¸ ÐºÐ¾Ð¼Ð°Ð½Ð´Ñƒ /set";
         }
         else if(timerType == PomodoroBot.TimerType.WORK){
-            msg = "Ïðîéøëî " + breakTimeDuration + timeUnit + " ×àñ â³äïî÷èíêó çàâåðøåíî!\nÍàñòóïíèé ïåð³îä òðèâàòèìå " + workTimeDuration + timeUnit + "\nÄî ðîáîòè!";
+            msg = "ÐŸÑ€Ð¾Ð¹ÑˆÐ»Ð¾ " + breakTimeDuration + timeUnit + " Ð§Ð°Ñ Ð²Ñ–Ð´Ð¿Ð¾Ñ‡Ð¸Ð½ÐºÑƒ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¾!\nÐÐ°ÑÑ‚ÑƒÐ¿Ð½Ð¸Ð¹ Ð¿ÐµÑ€Ñ–Ð¾Ð´ Ñ‚Ñ€Ð¸Ð²Ð°Ñ‚Ð¸Ð¼Ðµ " + workTimeDuration + timeUnit + "\nÐ”Ð¾ Ñ€Ð¾Ð±Ð¾Ñ‚Ð¸!";
         }
         else{
-            msg = "Ïðîéøëî " + workTimeDuration + timeUnit + " ×àñ ðîáîòè çàâåðøåíî!\nÍàñòóïíèé ïåð³îä òðèâàòèìå " + breakTimeDuration + timeUnit + "\nÃàðíîãî â³äïî÷èíêó!";
+            msg = "ÐŸÑ€Ð¾Ð¹ÑˆÐ»Ð¾ " + workTimeDuration + timeUnit + " Ð§Ð°Ñ Ñ€Ð¾Ð±Ð¾Ñ‚Ð¸ Ð·Ð°Ð²ÐµÑ€ÑˆÐµÐ½Ð¾!\nÐÐ°ÑÑ‚ÑƒÐ¿Ð½Ð¸Ð¹ Ð¿ÐµÑ€Ñ–Ð¾Ð´ Ñ‚Ñ€Ð¸Ð²Ð°Ñ‚Ð¸Ð¼Ðµ " + breakTimeDuration + timeUnit + "\nÐ“Ð°Ñ€Ð½Ð¾Ð³Ð¾ Ð²Ñ–Ð´Ð¿Ð¾Ñ‡Ð¸Ð½ÐºÑƒ!";
         }
 
         PomodoroBot.S.sendMessage(chatId, msg);

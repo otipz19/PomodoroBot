@@ -45,7 +45,7 @@ public class PomodoroBot extends TelegramLongPollingBot {
                 case "/set" -> setCommand(chatId, cmd);
                 case "/chrono" -> chronoCommand(chatId, cmd[1]);
                 case "/stop" -> stopCommand(chatId);
-                default -> sendMessage(chatId, "Команда не розпізнана");
+                default -> sendMessage(chatId, "РљРѕРјР°РЅРґР° РЅРµ СЂРѕР·РїС–Р·РЅР°РЅР°");
             }
         }
     }
@@ -76,14 +76,14 @@ public class PomodoroBot extends TelegramLongPollingBot {
             users.put(chatId, new PomodoroUser(chatId));
 
         sendMessage(chatId, """
-                Привіт! Я бот, що допомагає керувати часом за допомогою принципа Помодоро.
-                Пропиши /help, щоб отримати список команд.
+                РџСЂРёРІС–С‚! РЇ Р±РѕС‚, С‰Рѕ РґРѕРїРѕРјР°РіР°С” РєРµСЂСѓРІР°С‚Рё С‡Р°СЃРѕРј Р·Р° РґРѕРїРѕРјРѕРіРѕСЋ РїСЂРёРЅС†РёРїР° РџРѕРјРѕРґРѕСЂРѕ.
+                РџСЂРѕРїРёС€Рё /help, С‰РѕР± РѕС‚СЂРёРјР°С‚Рё СЃРїРёСЃРѕРє РєРѕРјР°РЅРґ.
                 """);
     }
 
     private void setCommand(Long chatId, String[] cmd){
         if(cmd.length < 5){
-            sendMessage(chatId, "Недостатньо аргументів!");
+            sendMessage(chatId, "РќРµРґРѕСЃС‚Р°С‚РЅСЊРѕ Р°СЂРіСѓРјРµРЅС‚С–РІ!");
             return;
         }
 
@@ -98,28 +98,28 @@ public class PomodoroBot extends TelegramLongPollingBot {
 
     private void chronoCommand(Long chatId, String unit){
         var user = users.get(chatId);
-        if(unit.equals("хв.")){
+        if(unit.equals("С…РІ.")){
             user.chronoUnit = ChronoUnit.MINUTES;
-            sendMessage(chatId, "Хвилини встановлено одиницями виміру");
+            sendMessage(chatId, "РҐРІРёР»РёРЅРё РІСЃС‚Р°РЅРѕРІР»РµРЅРѕ РѕРґРёРЅРёС†СЏРјРё РІРёРјС–СЂСѓ");
         }
-        else if(unit.equals("с.")){
+        else if(unit.equals("СЃ.")){
             user.chronoUnit = ChronoUnit.SECONDS;
-            sendMessage(chatId, "Секунди встановлено одиницями виміру");
+            sendMessage(chatId, "РЎРµРєСѓРЅРґРё РІСЃС‚Р°РЅРѕРІР»РµРЅРѕ РѕРґРёРЅРёС†СЏРјРё РІРёРјС–СЂСѓ");
         }
         else{
-            sendMessage(chatId, "Неможливий аргумент!");
+            sendMessage(chatId, "РќРµРјРѕР¶Р»РёРІРёР№ Р°СЂРіСѓРјРµРЅС‚!");
         }
     }
 
     private void stopCommand(Long chatId){
         users.get(chatId).StopTimer();
-        sendMessage(chatId, "Таймер зупинено!");
+        sendMessage(chatId, "РўР°Р№РјРµСЂ Р·СѓРїРёРЅРµРЅРѕ!");
     }
 
     private void helpCommand(Long chatId){
         sendMessage(chatId, """
-                    /set [тривалість роботи] [тривалість відпочинку] [кіл-ть повторень циклу] [множник часу роботи] - запускає новий таймер
-                    /chrono [одиниця виміру часу], допустимі аргументи: хв., с. - змінює одиницю виміру часу
-                    /stop - зупиняє таймер""");
+                    /set [С‚СЂРёРІР°Р»С–СЃС‚СЊ СЂРѕР±РѕС‚Рё] [С‚СЂРёРІР°Р»С–СЃС‚СЊ РІС–РґРїРѕС‡РёРЅРєСѓ] [РєС–Р»-С‚СЊ РїРѕРІС‚РѕСЂРµРЅСЊ С†РёРєР»Сѓ] [РјРЅРѕР¶РЅРёРє С‡Р°СЃСѓ СЂРѕР±РѕС‚Рё] - Р·Р°РїСѓСЃРєР°С” РЅРѕРІРёР№ С‚Р°Р№РјРµСЂ
+                    /chrono [РѕРґРёРЅРёС†СЏ РІРёРјС–СЂСѓ С‡Р°СЃСѓ], РґРѕРїСѓСЃС‚РёРјС– Р°СЂРіСѓРјРµРЅС‚Рё: С…РІ., СЃ. - Р·РјС–РЅСЋС” РѕРґРёРЅРёС†СЋ РІРёРјС–СЂСѓ С‡Р°СЃСѓ
+                    /stop - Р·СѓРїРёРЅСЏС” С‚Р°Р№РјРµСЂ""");
     }
 }
